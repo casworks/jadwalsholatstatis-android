@@ -13,6 +13,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String[] TAB_TITLES = {
             "Jadwal",
+            "Countdown",
             "Pengingat",
             "Tentang"
     };

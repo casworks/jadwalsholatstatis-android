@@ -18,6 +18,16 @@
 
     <string name="button_refresh">Tampilkan Jadwal</string>
 
+    <string name="countdown_target">Menuju %1$s (%2$s)</string>
+    <string name="countdown_remaining">Sisa waktu: %1$s</string>
+    <string name="countdown_target_placeholder">Menuju sholat berikutnya</string>
+    <string name="countdown_placeholder">Sisa waktu: --:--</string>
+    <string name="countdown_notif_title">Menuju waktu %1$s</string>
+    <string name="countdown_notif_message">⏳ %1$s lagi</string>
+    <string name="countdown_notif_arrived_title">🕌 Waktu %1$s Telah Tiba</string>
+    <string name="countdown_notif_arrived_message">Silakan menunaikan sholat.</string>
+    <string name="countdown_channel_name">Countdown Sholat</string>
+
     <string name="notif_title">Waktu %1$s</string>
     <string name="notif_message">Masuk waktu sholat %1$s</string>
     <string name="notif_channel_name">Pengingat Sholat</string>
