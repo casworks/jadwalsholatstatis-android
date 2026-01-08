@@ -15,12 +15,30 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     public static final String EXTRA_NAMA_SHOLAT = "extra_nama_sholat";
     public static final String EXTRA_WAKTU_SHOLAT = "extra_waktu_sholat";
+    public static final String EXTRA_TYPE = "extra_type";
+    public static final String EXTRA_MINUTES_LEFT = "extra_minutes_left";
+    public static final String TYPE_COUNTDOWN = "type_countdown";
+    public static final String TYPE_ARRIVED = "type_arrived";
     private static final String CHANNEL_ID = "jadwal_sholat_channel";
 
     @Override
     public void onReceive(Context context, Intent intent) {
         String namaSholat = intent.getStringExtra(EXTRA_NAMA_SHOLAT);
         String waktuSholat = intent.getStringExtra(EXTRA_WAKTU_SHOLAT);
+        String type = intent.getStringExtra(EXTRA_TYPE);
+        if (TYPE_COUNTDOWN.equals(type)) {
+            int minutesLeft = intent.getIntExtra(EXTRA_MINUTES_LEFT, 0);
+            String countdownText = String.format("%02d:00", Math.max(minutesLeft, 0));
+            com.example.jadwalsholatstatis.notification.PrayerNotificationHelper
+                    .showCountdown(context, namaSholat, countdownText);
+            return;
+        }
+        if (TYPE_ARRIVED.equals(type)) {
+            com.example.jadwalsholatstatis.notification.PrayerNotificationHelper
+                    .showArrived(context, namaSholat);
+            return;
+        }
+
         String title = context.getString(R.string.notif_title, namaSholat);
         String message = context.getString(R.string.notif_message, waktuSholat);
 
