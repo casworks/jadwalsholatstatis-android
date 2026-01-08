@@ -69,6 +69,9 @@ public class PengingatFragment extends Fragment implements PengingatAdapter.OnRe
     }
 
     private void setReminderAlarms(PrayerItem item, int position) {
+        if (item == null || item.getWaktu() == null || item.getWaktu().isEmpty()) {
+            return;
+        }
         Context context = requireContext();
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         if (alarmManager == null) {
@@ -84,6 +87,9 @@ public class PengingatFragment extends Fragment implements PengingatAdapter.OnRe
         }
 
         long minutesUntil = Duration.between(now, targetDateTime).toMinutes();
+        if (minutesUntil <= 0) {
+            return;
+        }
         int countdownMinutes = (int) Math.min(MAX_COUNTDOWN_MINUTES, minutesUntil);
 
         for (int minutesLeft = countdownMinutes; minutesLeft >= 1; minutesLeft--) {
@@ -136,6 +142,9 @@ public class PengingatFragment extends Fragment implements PengingatAdapter.OnRe
 
     private void scheduleExact(AlarmManager alarmManager, LocalDateTime dateTime, PendingIntent intent) {
         long triggerAtMillis = toMillis(dateTime);
+        if (triggerAtMillis <= System.currentTimeMillis()) {
+            return;
+        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis, intent);
         } else {
