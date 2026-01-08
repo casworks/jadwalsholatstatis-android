@@ -1,4 +1,4 @@
-package com.example.jadwalsholatstatis;
+package com.example.jadwalsholatstatis.model;
 
 public class PrayerTime {
     private final String subuh;

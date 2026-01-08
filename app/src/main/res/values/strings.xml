@@ -18,6 +18,17 @@
 
     <string name="button_refresh">Tampilkan Jadwal</string>
 
+    <string name="notif_title">Waktu %1$s</string>
+    <string name="notif_message">Masuk waktu sholat %1$s</string>
+    <string name="notif_channel_name">Pengingat Sholat</string>
+
+    <string name="tentang_judul">Tentang Aplikasi</string>
+    <string name="tentang_tujuan">Tujuan: Menampilkan jadwal sholat harian secara statis untuk kebutuhan demo akademik.</string>
+    <string name="tentang_metode">Metode: Jadwal disimpan secara lokal tanpa API, GPS, atau database.</string>
+    <string name="tentang_sumber">Sumber data: Jadwal contoh statis (3 kota).</string>
+    <string name="tentang_nama">Nama: (Isi Nama Anda)</string>
+    <string name="tentang_npm">NPM: (Isi NPM Anda)</string>
+
     <string-array name="kota_list">
         <item>Surabaya</item>
         <item>Jakarta</item>
