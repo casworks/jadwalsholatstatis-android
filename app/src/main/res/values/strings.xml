@@ -1,3 +1,26 @@
 <resources>
     <string name="app_name">Jadwal Sholat Statis</string>
+    <string name="masjid_icon_desc">Ikon masjid</string>
+    <string name="tanggal_placeholder">Tanggal</string>
+    <string name="kota_placeholder">Kota</string>
+
+    <string name="label_subuh">Subuh: %1$s</string>
+    <string name="label_dzuhur">Dzuhur: %1$s</string>
+    <string name="label_ashar">Ashar: %1$s</string>
+    <string name="label_maghrib">Maghrib: %1$s</string>
+    <string name="label_isya">Isya: %1$s</string>
+
+    <string name="label_subuh_placeholder">Subuh: -</string>
+    <string name="label_dzuhur_placeholder">Dzuhur: -</string>
+    <string name="label_ashar_placeholder">Ashar: -</string>
+    <string name="label_maghrib_placeholder">Maghrib: -</string>
+    <string name="label_isya_placeholder">Isya: -</string>
+
+    <string name="button_refresh">Tampilkan Jadwal</string>
+
+    <string-array name="kota_list">
+        <item>Surabaya</item>
+        <item>Jakarta</item>
+        <item>Bandung</item>
+    </string-array>
 </resources>

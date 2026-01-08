@@ -1,8 +1,9 @@
 package com.example.jadwalsholatstatis;
 
 import android.os.Bundle;
-import android.widget.Spinner;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,14 +11,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
 
-    TextView tvTanggal, tvSubuh, tvDzuhur, tvAshar, tvMaghrib, tvIsya;
-    Spinner spinnerKota;
+    private TextView tvTanggal;
+    private TextView tvNamaKota;
+    private TextView tvSubuh;
+    private TextView tvDzuhur;
+    private TextView tvAshar;
+    private TextView tvMaghrib;
+    private TextView tvIsya;
+    private Spinner spinnerKota;
+    private Button btnRefresh;
 
-    HashMap<String, String[]> jadwalSholat = new HashMap<>();
+    private PrayerData prayerData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,19 +32,26 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         tvTanggal = findViewById(R.id.tvTanggal);
+        tvNamaKota = findViewById(R.id.tvNamaKota);
         tvSubuh = findViewById(R.id.tvSubuh);
         tvDzuhur = findViewById(R.id.tvDzuhur);
         tvAshar = findViewById(R.id.tvAshar);
         tvMaghrib = findViewById(R.id.tvMaghrib);
         tvIsya = findViewById(R.id.tvIsya);
         spinnerKota = findViewById(R.id.spinnerKota);
+        btnRefresh = findViewById(R.id.btnRefresh);
+
+        prayerData = new PrayerData();
 
         tampilkanTanggal();
-        setupData();
         setupSpinner();
+        tampilkanJadwal(spinnerKota.getSelectedItem().toString());
+
+        btnRefresh.setOnClickListener(v ->
+                tampilkanJadwal(spinnerKota.getSelectedItem().toString()));
     }
 
-    void tampilkanTanggal() {
+    private void tampilkanTanggal() {
         String tanggal = new SimpleDateFormat(
                 "EEEE, dd MMMM yyyy",
                 new Locale("id", "ID")
@@ -45,16 +59,8 @@ public class MainActivity extends AppCompatActivity {
         tvTanggal.setText(tanggal);
     }
 
-    void setupData() {
-        jadwalSholat.put("Surabaya",
-                new String[]{"04:18", "11:38", "14:58", "17:33", "18:43"});
-
-        jadwalSholat.put("Jakarta",
-                new String[]{"04:20", "11:40", "15:00", "17:35", "18:45"});
-    }
-
-    void setupSpinner() {
-        String[] kota = {"Surabaya", "Jakarta"};
+    private void setupSpinner() {
+        String[] kota = getResources().getStringArray(R.array.kota_list);
 
         ArrayAdapter<String> adapter =
                 new ArrayAdapter<>(this,
@@ -65,30 +71,19 @@ public class MainActivity extends AppCompatActivity {
                 android.R.layout.simple_spinner_dropdown_item);
 
         spinnerKota.setAdapter(adapter);
+    }
 
-        spinnerKota.setOnItemSelectedListener(
-                new android.widget.AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(
-                            android.widget.AdapterView<?> parent,
-                            android.view.View view,
-                            int position,
-                            long id) {
+    private void tampilkanJadwal(String namaKota) {
+        PrayerTime waktu = prayerData.getPrayerTime(namaKota);
+        if (waktu == null) {
+            return;
+        }
 
-                        String namaKota = kota[position];
-                        String[] waktu = jadwalSholat.get(namaKota);
-
-                        tvSubuh.setText("Subuh: " + waktu[0]);
-                        tvDzuhur.setText("Dzuhur: " + waktu[1]);
-                        tvAshar.setText("Ashar: " + waktu[2]);
-                        tvMaghrib.setText("Maghrib: " + waktu[3]);
-                        tvIsya.setText("Isya: " + waktu[4]);
-                    }
-
-                    @Override
-                    public void onNothingSelected(
-                            android.widget.AdapterView<?> parent) {
-                    }
-                });
+        tvNamaKota.setText(namaKota);
+        tvSubuh.setText(getString(R.string.label_subuh, waktu.getSubuh()));
+        tvDzuhur.setText(getString(R.string.label_dzuhur, waktu.getDzuhur()));
+        tvAshar.setText(getString(R.string.label_ashar, waktu.getAshar()));
+        tvMaghrib.setText(getString(R.string.label_maghrib, waktu.getMaghrib()));
+        tvIsya.setText(getString(R.string.label_isya, waktu.getIsya()));
     }
 }
