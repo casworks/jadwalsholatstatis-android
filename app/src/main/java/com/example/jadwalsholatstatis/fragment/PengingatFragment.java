@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -77,10 +78,12 @@ public class PengingatFragment extends Fragment implements PengingatAdapter.OnRe
                 return;
             }
             setReminderAlarms(item, position);
+            showToast(R.string.reminder_enabled);
         } else {
             pendingItem = null;
             pendingPosition = RecyclerView.NO_POSITION;
             cancelReminderAlarms(position);
+            showToast(R.string.reminder_disabled);
         }
     }
 
@@ -94,10 +97,17 @@ public class PengingatFragment extends Fragment implements PengingatAdapter.OnRe
             if (granted && pendingItem != null && pendingPosition != RecyclerView.NO_POSITION) {
                 pengingatAdapter.setChecked(pendingPosition, true);
                 setReminderAlarms(pendingItem, pendingPosition);
+                showToast(R.string.reminder_enabled);
+            } else if (!granted) {
+                showToast(R.string.reminder_permission_needed);
             }
             pendingItem = null;
             pendingPosition = RecyclerView.NO_POSITION;
         }
+    }
+
+    private void showToast(int messageResId) {
+        Toast.makeText(requireContext(), messageResId, Toast.LENGTH_SHORT).show();
     }
 
     private boolean hasNotificationPermission() {
