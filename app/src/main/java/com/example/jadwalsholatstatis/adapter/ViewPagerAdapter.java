@@ -7,6 +7,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.example.jadwalsholatstatis.fragment.CountdownFragment;
 import com.example.jadwalsholatstatis.fragment.JadwalFragment;
+import com.example.jadwalsholatstatis.fragment.MenuUtamaFragment;
 import com.example.jadwalsholatstatis.fragment.PengingatFragment;
 import com.example.jadwalsholatstatis.fragment.TentangFragment;
 
@@ -19,13 +20,16 @@ public class ViewPagerAdapter extends FragmentStateAdapter {
     @NonNull
     @Override
     public Fragment createFragment(int position) {
-        if (position == 1) {
-            return new CountdownFragment();
+        if (position == 0) {
+            return new MenuUtamaFragment();
         }
         if (position == 2) {
-            return new PengingatFragment();
+            return new CountdownFragment();
         }
         if (position == 3) {
+            return new PengingatFragment();
+        }
+        if (position == 4) {
             return new TentangFragment();
         }
         return new JadwalFragment();
@@ -33,6 +37,6 @@ public class ViewPagerAdapter extends FragmentStateAdapter {
 
     @Override
     public int getItemCount() {
-        return 4;
+        return 5;
     }
 }

@@ -20,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 100;
     private static final String[] TAB_TITLES = {
+            "Menu",
             "Jadwal",
             "Countdown",
             "Pengingat",
