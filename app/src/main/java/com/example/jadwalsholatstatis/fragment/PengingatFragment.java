@@ -1,20 +1,24 @@
 package com.example.jadwalsholatstatis.fragment;
 
+import android.Manifest;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.core.content.ContextCompat;
 
 import com.example.jadwalsholatstatis.R;
 import com.example.jadwalsholatstatis.adapter.PengingatAdapter;
@@ -33,8 +37,11 @@ public class PengingatFragment extends Fragment implements PengingatAdapter.OnRe
 
     private static final int MAX_COUNTDOWN_MINUTES = 30;
     private static final int ARRIVAL_OFFSET = 1500;
+    private static final int REQUEST_NOTIFICATIONS = 100;
     private PrayerData prayerData;
     private PengingatAdapter pengingatAdapter;
+    private PrayerItem pendingItem;
+    private int pendingPosition = RecyclerView.NO_POSITION;
 
     @Nullable
     @Override
@@ -62,13 +69,59 @@ public class PengingatFragment extends Fragment implements PengingatAdapter.OnRe
     @Override
     public void onToggle(PrayerItem item, boolean isChecked, int position) {
         if (isChecked) {
+            if (!hasNotificationPermission()) {
+                pendingItem = item;
+                pendingPosition = position;
+                requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS},
+                        REQUEST_NOTIFICATIONS);
+                pengingatAdapter.setChecked(position, false);
+                return;
+            }
             setReminderAlarms(item, position);
+            showToast(R.string.reminder_enabled);
         } else {
+            pendingItem = null;
+            pendingPosition = RecyclerView.NO_POSITION;
             cancelReminderAlarms(position);
+            showToast(R.string.reminder_disabled);
         }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_NOTIFICATIONS) {
+            boolean granted = grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED;
+            if (granted && pendingItem != null && pendingPosition != RecyclerView.NO_POSITION) {
+                pengingatAdapter.setChecked(pendingPosition, true);
+                setReminderAlarms(pendingItem, pendingPosition);
+                showToast(R.string.reminder_enabled);
+            } else if (!granted) {
+                showToast(R.string.reminder_permission_needed);
+            }
+            pendingItem = null;
+            pendingPosition = RecyclerView.NO_POSITION;
+        }
+    }
+
+    private void showToast(int messageResId) {
+        Toast.makeText(requireContext(), messageResId, Toast.LENGTH_SHORT).show();
+    }
+
+    private boolean hasNotificationPermission() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            return true;
+        }
+        return ContextCompat.checkSelfPermission(requireContext(),
+                Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED;
+    }
+
     private void setReminderAlarms(PrayerItem item, int position) {
+        if (item == null || item.getWaktu() == null || item.getWaktu().isEmpty()) {
+            return;
+        }
         Context context = requireContext();
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         if (alarmManager == null) {
@@ -84,6 +137,9 @@ public class PengingatFragment extends Fragment implements PengingatAdapter.OnRe
         }
 
         long minutesUntil = Duration.between(now, targetDateTime).toMinutes();
+        if (minutesUntil <= 0) {
+            return;
+        }
         int countdownMinutes = (int) Math.min(MAX_COUNTDOWN_MINUTES, minutesUntil);
 
         for (int minutesLeft = countdownMinutes; minutesLeft >= 1; minutesLeft--) {
@@ -136,6 +192,9 @@ public class PengingatFragment extends Fragment implements PengingatAdapter.OnRe
 
     private void scheduleExact(AlarmManager alarmManager, LocalDateTime dateTime, PendingIntent intent) {
         long triggerAtMillis = toMillis(dateTime);
+        if (triggerAtMillis <= System.currentTimeMillis()) {
+            return;
+        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis, intent);
         } else {

@@ -39,6 +39,14 @@ public class PengingatAdapter extends RecyclerView.Adapter<PengingatAdapter.Peng
         notifyDataSetChanged();
     }
 
+    public void setChecked(int position, boolean isChecked) {
+        if (position < 0 || position >= states.size()) {
+            return;
+        }
+        states.set(position, isChecked);
+        notifyItemChanged(position);
+    }
+
     @NonNull
     @Override
     public PengingatViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
